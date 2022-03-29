@@ -1,0 +1,23 @@
+.dashboard {
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+}
+.navLinks {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+.navLink {
+  text-decoration: none;
+  margin: 20px;
+}
+.navLink button {
+  background-color: rgb(0, 162, 255);
+  padding: 8px 15px;
+  color: white;
+}
+.navLink button:hover {
+  background-color: rgb(0, 162, 255);
+  color: white;
+}

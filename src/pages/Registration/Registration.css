@@ -1,0 +1,20 @@
+.registration-form {
+  width: fit-content;
+
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 20px;
+}
+.registration {
+  display: flex;
+  padding: 40px;
+  align-items: flex-start;
+  justify-content: center;
+  height: 100vh;
+}
+.camera {
+  padding: 0 30px;
+}
+.camera video {
+  width: 400px;
+}
