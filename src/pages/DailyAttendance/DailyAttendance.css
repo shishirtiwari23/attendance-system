@@ -1,0 +1,29 @@
+.daily-attendance {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+.daily-attendance .camera {
+  position: relative;
+  width: 1000px;
+  height: calc(1000px / calc(16 / 9));
+}
+.daily-attendance .snapshot,
+.daily-attendance video {
+  position: absolute;
+  width: 1000px;
+}
+.daily-attendance .buttons {
+  width: 100%;
+  justify-content: center;
+  display: flex;
+}
+.daily-attendance .button {
+  width: 200px;
+  padding: 10px;
+  margin: 20px;
+}
+.daily-attendance .button.submit {
+  background-color: rgb(129, 206, 15);
+}

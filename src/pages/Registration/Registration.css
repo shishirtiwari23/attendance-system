@@ -1,6 +1,5 @@
 .registration-form {
   width: fit-content;
-
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 20px;
@@ -8,13 +7,22 @@
 .registration {
   display: flex;
   padding: 40px;
-  align-items: flex-start;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
   height: 100vh;
 }
-.camera {
-  padding: 0 30px;
-}
-.camera video {
+.registration .camera {
+  margin: 20px;
+  position: relative;
   width: 400px;
+  height: calc(400px / calc(16 / 9));
+}
+.registration .snapshot,
+.registration video {
+  position: absolute;
+  width: 400px;
+}
+input {
+  min-width: 250px !important;
 }

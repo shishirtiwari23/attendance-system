@@ -1,16 +1,21 @@
 import "./Registration.css";
 import { Button, TextField } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
+import axios from "axios";
+import { ConfirmationModal } from "../../components";
 
 const Registration = () => {
   const videoRef = useRef(null);
   const snapshotRef = useRef(null);
-
+  const [image, setImage] = useState("");
   const [name, setName] = useState("");
-  const [age, setAge] = useState("");
-  const [standard, setStandard] = useState("");
+  const [age, setAge] = useState(0);
+  const [standard, setStandard] = useState(0);
   const [rollNo, setRollNo] = useState("");
-  const [id, setId] = useState("ABX13341");
+  const [uid, setUid] = useState(Date.now());
+  const [section, setSection] = useState("");
+  const [takingAnotherSnapshot, setTakingAnotherSnapshot] = useState(true);
+  const [isModalRequested, setIsModalRequested] = useState(false);
 
   function getVideo() {
     window.navigator.mediaDevices
@@ -20,7 +25,48 @@ const Registration = () => {
         video.srcObject = stream;
         video.play();
       })
-      .catch((err) => console.error(err));
+      .catch((err) => console.log(err));
+  }
+
+  function checkData() {
+    const data = new FormData();
+    // data.append(
+    //   "data",
+    //   JSON.stringify({
+    //     name,
+    //     age,
+    //     standard,
+    //     rollNo,
+    //     uid,
+    //     section,
+    //   })
+    // );
+    data.append("uid", uid);
+    data.append("name", name);
+    data.append("section", section);
+    data.append("age", age);
+    data.append("standard", standard);
+    data.append("rollNo", rollNo);
+    data.append("image", image);
+    axios
+      .post("http://localhost:8080/register", data)
+      .then((res) => {
+        return res;
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((err) => console.log(err));
+    axios
+      .get("http://localhost:8080/data")
+      .then((res) => {
+        console.log(res);
+        return res;
+      })
+      .then((data) => {
+        console.log({ data });
+      })
+      .catch((err) => console.log(err));
   }
 
   function takeSnapshot() {
@@ -32,59 +78,117 @@ const Registration = () => {
 
     let context = snapshot.getContext("2d");
     context.drawImage(video, 0, 0, dimension.width, dimension.height);
+    setImage(snapshotRef.current.toDataURL());
+    setTakingAnotherSnapshot(false);
+  }
+
+  function takeAnotherHandler() {
+    setTakingAnotherSnapshot(true);
+  }
+  useEffect(() => {
+    console.log(snapshotRef);
+  });
+  function submitHandler(e) {
+    e.preventDefault();
+    if (!takingAnotherSnapshot) {
+      checkData();
+      setIsModalRequested(true);
+      setTakingAnotherSnapshot(true);
+      setTimeout(() => setIsModalRequested(false), 3000);
+    }
   }
   useEffect(() => {
     getVideo();
   }, [videoRef]);
 
   return (
-    <div className="registration">
-      <form className="registration-form">
+    <form onSubmit={submitHandler} className="registration">
+      <div className="registration-form">
         <TextField
           id="outlined-basic"
-          value={id}
-          onChnage={(e) => setId(e.target.value)}
+          value={uid}
+          onChange={(e) => setUid(e.target.value)}
           label="Id"
+          required
           disabled
           variant="outlined"
         />
         <TextField
           id="outlined-basic"
           value={name}
-          onChnage={(e) => setName(e.target.value)}
+          onChange={(e) => setName(e.target.value)}
           label="Name"
+          required
           variant="outlined"
         />
         <TextField
           id="outlined-basic"
           value={rollNo}
-          onChnage={(e) => setRollNo(e.target.value)}
+          onChange={(e) => setRollNo(e.target.value)}
           label="Roll No"
+          required
           variant="outlined"
         />
         <TextField
           id="outlined-basic"
           value={standard}
-          onChnage={(e) => setStandard(e.target.value)}
+          onChange={(e) => setStandard(e.target.value)}
           label="Standard"
+          required
+          variant="outlined"
+        />
+        <TextField
+          id="outlined-basic"
+          value={section}
+          onChange={(e) => setSection(e.target.value)}
+          label="Section"
+          required
           variant="outlined"
         />
         <TextField
           id="outlined-basic"
           value={age}
-          onChnage={(e) => setAge(e.target.value)}
+          onChange={(e) => setAge(e.target.value)}
           label="Age"
+          required
           variant="outlined"
         />
-        <Button onClick={takeSnapshot}>Take a Picture</Button>
-      </form>
+      </div>
       <div className="camera">
         <video ref={videoRef}></video>
-        <div className="snapshot">
+        <div
+          style={
+            takingAnotherSnapshot ? { display: "none" } : { display: "block" }
+          }
+          className="snapshot"
+        >
           <canvas ref={snapshotRef}></canvas>
         </div>
+        <div className="buttons">
+          <Button
+            className="button"
+            onClick={() =>
+              takingAnotherSnapshot ? takeSnapshot() : takeAnotherHandler()
+            }
+          >
+            {takingAnotherSnapshot ? "Capture" : "Take Another"}
+          </Button>
+        </div>
       </div>
-    </div>
+      <Button
+        // disabled={takingAnotherSnapshot ? true : false}
+        className="button submit"
+        type="submit"
+      >
+        Submit
+      </Button>
+      {isModalRequested && (
+        <ConfirmationModal
+          handleClose={setIsModalRequested}
+          message={"Registration Successful"}
+        />
+      )}
+    </form>
   );
 };
 
